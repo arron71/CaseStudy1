@@ -1,0 +1,76 @@
+---
+title: "Case Study 1"
+author: "Aaron Cattley and Bruce Lee"
+date: "2/18/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Question 1: How many breweries are present in each state?
+
+```{r question_1 data, echo=TRUE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+## Load the breweries data set
+fileLocation <- "https://raw.githubusercontent.com/BruceLeeSMU/CaseStudy1/master/Breweries.csv"
+breweryData <- read.csv(url(fileLocation))
+
+# 1. Find how many breweries there are by state and list them
+brewery.byState <- count(breweryData, State)
+names(brewery.byState) <- c("State", "NumPerState")
+brewery.byState
+
+# 2. Merge beer data with the breweries data.  Print the first 6 and last 6 observations of the merged file
+
+
+
+
+```
+
+# Question 2 : Merge beer data with the breweries data.  Print the first six and the last six observations
+
+```{r question_2 data, echo=TRUE}
+## Load the beer data set
+fileLocation2 <- "https://raw.githubusercontent.com/BruceLeeSMU/CaseStudy1/master/Beers.csv"
+beerData <- read.csv(url(fileLocation2))
+
+## Merge the brewery and beer data sets
+breweryAndBeerData <- merge(breweryData, beerData, by.x="Brew_ID", by.y="Brewery_id")
+
+## Print the first six observations
+head(breweryAndBeerData, 6)
+
+## Print the last six observations
+tail(breweryAndBeerData, 6)
+
+```
+
+# Question 3 : Report the number of NA's in each column.
+
+```{r question_3 data, echo=TRUE}
+## Get the columns from the breweryAndBeerData data.frame()
+str(breweryAndBeerData)
+## Rename the Name.x and Name.y columns from after merging
+colnames(breweryAndBeerData)[2] <- "BreweryName"
+colnames(breweryAndBeerData)[5] <- "BeerName"
+
+test.x <- grep("NA", breweryAndBeerData$IBU, value = TRUE)
+
+## The number of NA's in each column:
+num.NA.Brew_ID <- length(which(is.na(breweryAndBeerData$Brew_ID)))
+num.NA.BreweryName <- length(which(is.na(breweryAndBeerData$BreweryName)))
+num.NA.City <- length(which(is.na(breweryAndBeerData$City)))
+num.NA.State <- length(which(is.na(breweryAndBeerData$State)))
+num.NA.BeerName <- length(which(is.na(breweryAndBeerData$BeerName)))
+num.NA.Beer_ID <- length(which(is.na(breweryAndBeerData$Beer_ID)))
+num.NA.ABV <- length(which(is.na(breweryAndBeerData$ABV)))
+num.NA.IBU <- length(which(is.na(breweryAndBeerData$IBU)))
+num.NA.Style <- length(which(is.na(breweryAndBeerData$Style)))
+num.NA.Ounces <- length(which(is.na(breweryAndBeerData$Ounces)))
+
+```
+  
