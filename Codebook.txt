@@ -1,0 +1,30 @@
+Codebook for Case Study 1
+
+Study Design: The data collected for this study was directly provided by the CEO of Budweiser.
+
+Variable		Type		Description
+--------		----		-----------
+
+fileLocation		character	URL for the brewery dataset
+
+breweryData		data.frame	Object that stores the brewery dataset
+
+brewery.byState		data.frame	Object that stores the number of breweries by state
+
+fileLocation2		character	URL for the beer dataset
+
+beerData		data.frame	Object that stores the beer dataset
+
+breweryAndBeerData	data.frame	Merged data frame from the brewery and beer datasets
+
+ABVMed			data.frame	Object that stores the median ABV by state
+
+IBUMed			data.frame	Object that stores the median IBU by state
+
+ABVplot			ggplot		Object that stores the histogram for the beers median ABV by state
+
+IBUplot			ggplot		Object that stores the histogram for the beers median IBU by state
+
+breweryAndBeerData2	data.frame 	The beer and brewery data frame without the observations with NA
+
+BandBplot		ggplot		Stores the scatterplot that displays the relationship between the beer ABV and IBU characteristics
