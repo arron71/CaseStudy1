@@ -11,6 +11,8 @@ breweryData		data.frame	Object that stores the brewery dataset
 
 brewery.byState		data.frame	Object that stores the number of breweries by state
 
+Stateplot		ggplot		Object that stores bubble plot of the number of breweries by state
+
 fileLocation2		character	URL for the beer dataset
 
 beerData		data.frame	Object that stores the beer dataset
