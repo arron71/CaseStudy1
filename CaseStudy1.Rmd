@@ -56,6 +56,15 @@ colnames(breweryAndBeerData)[5] <- "BeerName"
 
 summary(breweryAndBeerData)
 
+num.NA.ABV <- length(which(is.na(breweryAndBeerData$ABV)))
+num.NA.IBU <- length(which(is.na(breweryAndBeerData$IBU)))
+
+num.NA <- data.frame(((num.NA.ABV/2410)*100),((num.NA.IBU/2410)*100))
+colnames(num.NA) <- c("ABV", "IBU")
+num.NA <- stack(num.NA)
+num.NA <- as.vector(num.NA)
+
+barplot(num.NA$values, ylim = c(0,50))
 ## From the summary of the data set, NA's are only present in the ABV and IBU columns where ABV has 65 NA values and IBU has 1005 NA values.
 
 ```
