@@ -93,8 +93,16 @@ summary(breweryAndBeerData$ABV)
 ```{r question_7 data, echo=TRUE}
 #Finally, we will build a scatterplot of the relationship between ABV and IBU
 breweryAndBeerData2 <- na.omit(breweryAndBeerData)
-BandBplot <- ggplot(breweryAndBeerData2, aes(x = ABV, y = IBU)) + geom_point(size = 2, shape = 23) + geom_smooth(method= "lm") + labs(title = "Relationship between ABV and IBU", x = "ABV", y = "IBU") + theme(plot.title = element_text(hjust = 0.5))
+
+BandBplot <- ggplot(breweryAndBeerData2, aes(x = breweryAndBeerData2$ABV, y = breweryAndBeerData2$IBU)) + geom_point(size = 2, shape = 23) + geom_point(aes(x=breweryAndBeerData2$ABV, y=breweryAndBeerData2$IBU, color = breweryAndBeerData2$State == 'KY' | breweryAndBeerData2$State == 'DC', size = breweryAndBeerData2$State == 'KY' | breweryAndBeerData2$State == 'DC')) + 
+  scale_color_manual(values = c("black", "red")) + scale_size_manual(values =c(1, 3)) + theme(legend.position = "none") +  geom_smooth(method= "lm") + labs(title = "Relationship between ABV and IBU", x = "ABV", y = "IBU") + theme(plot.title = element_text(hjust = 0.5))
 BandBplot
 ```
 
   #The scatterplot shows a trend that increasing ABV in beer also increases the bitter taste.  
+  
+  #To strengthen our findings, a correlation test was run and there was significant evidence at the alpha level of 0.05 level of significance to suggest that the ABV and IBU are linearly correlated (p < 0.0001)!
+```{r further_evidence data, echo=TRUE}
+plot(breweryAndBeerData2$ABV, breweryAndBeerData2$IBU, xlab='ABV', ylab='IBU', main = 'ABV vs IBU')
+cor.test(breweryAndBeerData2$ABV, breweryAndBeerData2$IBU)
+```
