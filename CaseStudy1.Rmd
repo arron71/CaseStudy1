@@ -12,7 +12,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, include = FALSE, echo=TRUE}
-library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(tidyverse)
@@ -65,7 +64,7 @@ num.NA <- stack(num.NA)
 num.NA <- as.vector(num.NA)
 
 barplot(num.NA$values, ylim = c(0,50))
-## From the summary of the data set, NA's are only present in the ABV and IBU columns where ABV has 65 NA values and IBU has 1005 NA values.
+## From the summary of the data set, NA's are only present in the ABV and IBU columns where ABV has 62 NA values and IBU has 1005 NA values.
 
 ```
   #Due to the large dataset we are working with, the lack of available data due the NA's will not impact the statistical analysis.
@@ -108,9 +107,9 @@ BandBplot <- ggplot(breweryAndBeerData2, aes(x = breweryAndBeerData2$ABV, y = br
 BandBplot
 ```
 
-  #The scatterplot shows a trend that increasing ABV in beer also increases the bitter taste.  
+  # The scatterplot shows a trend that increasing ABV in beer also increases the bitter taste.  
   
-  #To strengthen our findings, a correlation test was run and there was significant evidence at the alpha level of 0.05 level of significance to suggest that the ABV and IBU are linearly correlated (p < 0.0001)!
+  # To strengthen our findings, a correlation test was run and there was significant evidence at the alpha level of 0.05 level of significance to suggest that the ABV and IBU are linearly correlated (p < 0.0001)!
 ```{r further_evidence data, echo=TRUE}
 plot(breweryAndBeerData2$ABV, breweryAndBeerData2$IBU, xlab='ABV', ylab='IBU', main = 'ABV vs IBU')
 cor.test(breweryAndBeerData2$ABV, breweryAndBeerData2$IBU)
