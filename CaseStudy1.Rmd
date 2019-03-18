@@ -5,14 +5,13 @@ date: "2/18/2019"
 output: html_document
 ---
 #Introduction: 
-  # This will review the basic statistics of U.S. craft beer.  There are 2410 beers across 558 U.S. breweries that will be apart of this study. The two separate datasets Budweiser supplied were used concurrently to develop these statistics.
+  # This will review the basic statistics of U.S. craft beer.  There are 2410 beers across 558 U.S. breweries that will be a part of this study. The two separate datasets Budweiser supplied were used concurrently to develop these statistics.
   
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, include = FALSE, echo=TRUE}
-library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(tidyverse)
@@ -25,10 +24,14 @@ breweryData <- read.csv(url(fileLocation))
 
 brewery.byState <- count(breweryData, State)
 names(brewery.byState) <- c("State", "NumPerState")
-brewery.byState
+head(brewery.byState)
+tail(brewery.byState)
+
+Stateplot <- ggplot(brewery.byState, aes(x=reorder(State, NumPerState), y = NumPerState, colour = State)) + geom_jitter(aes(col=State, size = NumPerState)) + geom_smooth(aes(col=State), method = "lm", se=F) + labs(title = "Number of Breweries by State", x = "State", y = "Number of Breweries")+ coord_flip()
+Stateplot
 ```
 
-# We've built a list of breweries by state.  Based on this list: Colorado, California, Michigan, Oregon and Texas have the highest number of breweries.  The states with lower number of breweries appear to be more related to being geolocationally based in more rural states than size.
+  # We've built a list of breweries by state.  Based on this list: Colorado, California, Michigan, Oregon and Texas have the highest number of breweries.  The states with a lower number of breweries appear to be more related to being geographically based in more rural states than the size of the state.
 
 ```{r question_2 data, echo=TRUE}
 ## We'll use the beer data set and merge it with the brewery data set.  We will show some examples of how this combined data frame looks.
@@ -41,32 +44,33 @@ head(breweryAndBeerData, 6)
 tail(breweryAndBeerData, 6)
 ```
 
-# The newly merged frame is ordered by the by the Brew ID.  A sample of the beginning and ending variables are shown for example. 
+  # The newly merged dataset is ordered by the by the Brew ID.  A sample of the beginning and ending variables are shown for example. 
 
 ```{r question_3 data, echo=TRUE}
-## Data sets sometimes have NA's for various reasons, we'll extract those values for representation purposes.  
+## Data sets sometimes have NA's for various reasons; we'll extract those values for representational purposes.  
 str(breweryAndBeerData)
 ## Rename the Name.x and Name.y columns from after merging
 colnames(breweryAndBeerData)[2] <- "BreweryName"
 colnames(breweryAndBeerData)[5] <- "BeerName"
 
-test.x <- grep("NA", breweryAndBeerData$IBU, value = TRUE)
+summary(breweryAndBeerData)
 
-num.NA.Brew_ID <- length(which(is.na(breweryAndBeerData$Brew_ID)))
-num.NA.BreweryName <- length(which(is.na(breweryAndBeerData$BreweryName)))
-num.NA.City <- length(which(is.na(breweryAndBeerData$City)))
-num.NA.State <- length(which(is.na(breweryAndBeerData$State)))
-num.NA.BeerName <- length(which(is.na(breweryAndBeerData$BeerName)))
-num.NA.Beer_ID <- length(which(is.na(breweryAndBeerData$Beer_ID)))
 num.NA.ABV <- length(which(is.na(breweryAndBeerData$ABV)))
 num.NA.IBU <- length(which(is.na(breweryAndBeerData$IBU)))
-num.NA.Style <- length(which(is.na(breweryAndBeerData$Style)))
-num.NA.Ounces <- length(which(is.na(breweryAndBeerData$Ounces)))
+
+num.NA <- data.frame(((num.NA.ABV/2410)*100),((num.NA.IBU/2410)*100))
+colnames(num.NA) <- c("ABV", "IBU")
+num.NA <- stack(num.NA)
+num.NA <- as.vector(num.NA)
+
+barplot(num.NA$values, ylim = c(0,50))
+## From the summary of the data set, NA's are only present in the ABV and IBU columns where ABV has 62 NA values and IBU has 1005 NA values.
+
 ```
-#Due to large data set we are working with, the lack of avaliable data due the NA's will not impact the statistical analysis.
+  #Due to the large dataset we are working with, the lack of available data due the NA's will not impact the statistical analysis.
 
 ```{r question_4 data, echo=TRUE}
-#The next chunk of code will calculate the medians for both the ABV and IBU of all beers in the data set. Histograms will also be coded for visualiation.
+#The next chunk of code will calculate the medians for both the ABV and IBU of all beers in the data set. Histograms will also be coded for visualization.
 ABVMed <- aggregate(breweryAndBeerData$ABV ~ breweryAndBeerData$State, data = breweryAndBeerData, median)
 colnames(ABVMed) <- c("State", "ABV")
 ABVMed <- ABVMed[order(ABVMed$ABV, decreasing = T),]
@@ -81,7 +85,7 @@ ABVplot
 IBUplot <- ggplot(IBUMed, aes(x=reorder(State, -IBU), y = IBU, colour = State)) + geom_bar(stat = "Identity") + labs(title = "IBU Median by State", x = "State", y = "Median")+ coord_flip()
 IBUplot
 ```
-# We've plotted the ABV and IBU with histograms.  They've been ordered from largest to smallest.
+  # We've plotted the ABV and IBU with histograms.  They've been ordered from largest to smallest.
 ```{r question_5 data, echo=TRUE}
 #Identify the State with the highest ABV beer
 head(ABVMed, 1)
@@ -93,88 +97,20 @@ head(IBUMed, 1)
 #The following code will provide a summary of statistics for the ABV.
 summary(breweryAndBeerData$ABV)
 ```
-#The ABV has a median of 0.5977 and mean of 0.067.  This would indicate this data has a skewed distribution.  Should more advanced statistics be run, the tests should be robust due to the large sample size in accordance to the Central Limit Theorom.
+  #The ABV has a mean of 0.05977 and median of 0.067.  This would indicate this data has a skewed distribution.  Should more advanced statistics be run, the tests should be robust due to the large sample size in accordance to the Central Limit Theorem.
 ```{r question_7 data, echo=TRUE}
 #Finally, we will build a scatterplot of the relationship between ABV and IBU
 breweryAndBeerData2 <- na.omit(breweryAndBeerData)
-BandBplot <- ggplot(breweryAndBeerData2, aes(x = ABV, y = IBU)) + geom_point(size = 2, shape = 23) + geom_smooth(method= "lm") +  labs(title = "Relationship between ABV and IBU", x = "ABV", y = "IBU")
+
+BandBplot <- ggplot(breweryAndBeerData2, aes(x = breweryAndBeerData2$ABV, y = breweryAndBeerData2$IBU)) + geom_point(size = 2, shape = 23) + geom_point(aes(x=breweryAndBeerData2$ABV, y=breweryAndBeerData2$IBU, color = breweryAndBeerData2$State == 'KY' | breweryAndBeerData2$State == 'DC', size = breweryAndBeerData2$State == 'KY' | breweryAndBeerData2$State == 'DC')) + 
+  scale_color_manual(values = c("black", "red")) + scale_size_manual(values =c(1, 3)) + theme(legend.position = "none") +  geom_smooth(method= "lm") + labs(title = "Relationship between ABV and IBU", x = "ABV", y = "IBU") + theme(plot.title = element_text(hjust = 0.5))
 BandBplot
 ```
 
-#The scatterplot shows a trend that increasing ABV in beer also  the bitter taste.  
-=======
----
-title: "Case Study 1"
-author: "Aaron Cattley and Bruce Lee"
-date: "2/18/2019"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-# Question 1: How many breweries are present in each state?
-
-```{r question_1 data, echo=TRUE}
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-
-## Load the breweries data set
-fileLocation <- "https://raw.githubusercontent.com/BruceLeeSMU/CaseStudy1/master/Breweries.csv"
-breweryData <- read.csv(url(fileLocation))
-
-# 1. Find how many breweries there are by state and list them
-brewery.byState <- count(breweryData, State)
-names(brewery.byState) <- c("State", "NumPerState")
-brewery.byState
-
-# 2. Merge beer data with the breweries data.  Print the first 6 and last 6 observations of the merged file
-
-
-
-
-```
-
-# Question 2 : Merge beer data with the breweries data.  Print the first six and the last six observations
-
-```{r question_2 data, echo=TRUE}
-## Load the beer data set
-fileLocation2 <- "https://raw.githubusercontent.com/BruceLeeSMU/CaseStudy1/master/Beers.csv"
-beerData <- read.csv(url(fileLocation2))
-
-## Merge the brewery and beer data sets
-breweryAndBeerData <- merge(breweryData, beerData, by.x="Brew_ID", by.y="Brewery_id")
-
-## Print the first six observations
-head(breweryAndBeerData, 6)
-
-## Print the last six observations
-tail(breweryAndBeerData, 6)
-
-```
-
-# Question 3 : Report the number of NA's in each column.
-
-```{r question_3 data, echo=TRUE}
-## Get the columns from the breweryAndBeerData data.frame()
-str(breweryAndBeerData)
-## Rename the Name.x and Name.y columns from after merging
-colnames(breweryAndBeerData)[2] <- "BreweryName"
-colnames(breweryAndBeerData)[5] <- "BeerName"
-
-test.x <- grep("NA", breweryAndBeerData$IBU, value = TRUE)
-
-## The number of NA's in each column:
-num.NA.Brew_ID <- length(which(is.na(breweryAndBeerData$Brew_ID)))
-num.NA.BreweryName <- length(which(is.na(breweryAndBeerData$BreweryName)))
-num.NA.City <- length(which(is.na(breweryAndBeerData$City)))
-num.NA.State <- length(which(is.na(breweryAndBeerData$State)))
-num.NA.BeerName <- length(which(is.na(breweryAndBeerData$BeerName)))
-num.NA.Beer_ID <- length(which(is.na(breweryAndBeerData$Beer_ID)))
-num.NA.ABV <- length(which(is.na(breweryAndBeerData$ABV)))
-num.NA.IBU <- length(which(is.na(breweryAndBeerData$IBU)))
-num.NA.Style <- length(which(is.na(breweryAndBeerData$Style)))
-num.NA.Ounces <- length(which(is.na(breweryAndBeerData$Ounces)))
-
+  # The scatterplot shows a trend that increasing ABV in beer also increases the bitter taste.  
+  
+  # To strengthen our findings, a correlation test was run and there was significant evidence at the alpha level of 0.05 level of significance to suggest that the ABV and IBU are linearly correlated (p < 0.0001)!
+```{r further_evidence data, echo=TRUE}
+plot(breweryAndBeerData2$ABV, breweryAndBeerData2$IBU, xlab='ABV', ylab='IBU', main = 'ABV vs IBU')
+cor.test(breweryAndBeerData2$ABV, breweryAndBeerData2$IBU)
 ```
